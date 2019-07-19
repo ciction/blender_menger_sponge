@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2015 sugiany
 # This file is distributed under the MIT License. See the LICENSE.md for more details.
-
 bl_info = {
     "name": "Menger Sponge",
     "author": "sugiany",
     "version": (1, 0, 0),
-    "blender": (2, 70, 0),
+    "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "warning": "",
     "description": "Add a menger sponge",
@@ -16,10 +15,9 @@ bl_info = {
 
 
 import bpy
-
 from bpy.props import IntProperty, BoolProperty, FloatVectorProperty, FloatProperty
-
 import bpy
+from bpy_extras.object_utils import AddObjectHelper, object_data_add
 import mathutils
 import copy
 
@@ -146,7 +144,7 @@ class MengerSponge(object):
                         depth - 1)
 
 
-class AddMengerSponge(bpy.types.Operator):
+class AddMengerSponge(bpy.types.Operator, AddObjectHelper):
     """Add a menger sponge"""
     bl_idname = "mesh.menger_sponge_add"
     bl_label = "Menger Sponge"
@@ -188,7 +186,7 @@ class AddMengerSponge(bpy.types.Operator):
         mesh = bpy.data.meshes.new(name='Sponge')
         mesh.from_pydata(vertices, [], faces)
         uvs = [(0.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, 0.0)]
-        mesh.uv_textures.new()
+        mesh.uv_layers.new()
         for i, uvloop in enumerate(mesh.uv_layers.active.data):
             uvloop.uv = uvs[i%4]
 
@@ -204,12 +202,12 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_class(AddMengerSponge)
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_class(AddMengerSponge)
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_MT_mesh_add.remove(menu_func)
 
 if __name__ == "__main__":
     register()
